@@ -1,7 +1,6 @@
 package fr.univcotedazur.vscf.components;
 
 import fr.univcotedazur.vscf.entities.Cookies;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,13 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class CatalogTest {
 
-
+    @Autowired
     Catalog catalog;
-
-    @BeforeEach
-    void setUp(@Autowired Catalog catalog) {
-        this.catalog = catalog;
-    }
 
     @Test
     void listPreMadeRecipesTest() {

@@ -15,12 +15,12 @@ import java.util.stream.StreamSupport;
 @Component
 public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
 
+    private CustomerRepository customerRepository;
+
     @Autowired // annotation is optional since Spring 4.3 if component has only one constructor
     public CustomerRegistry(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-
-    private CustomerRepository customerRepository;
 
     @Override
     public Customer register(String name, String creditCard)
