@@ -37,16 +37,16 @@ public class OrderingCookies {
     private OrderRepository orderRepository;
 
     @Autowired
-    private CartModifier cart;
+    private CartModifier cartModifier;
 
     @Autowired
-    private CartProcessor processor;
+    private CartProcessor cartProcessor;
 
     @Autowired
-    private CustomerRegistration registry;
+    private CustomerRegistration customerRegistration;
 
     @Autowired
-    private CustomerFinder finder;
+    private CustomerFinder customerFinder;
 
     @Autowired // Bug in the Cucumber/Mockito/Spring coordination: needs to add @Autowired
     @MockBean
@@ -65,13 +65,13 @@ public class OrderingCookies {
 
     @Given("a customer named {string} with credit card {string}")
     public void aCustomerNamedWithCreditCard(String customerName, String creditCard) throws AlreadyExistingCustomerException {
-        registry.register(customerName, creditCard);
+        customerRegistration.register(customerName, creditCard);
     }
 
     @When("{string} asks for his cart contents")
     public void customerAsksForHisCartContents(String customerName) {
-        customer = finder.findByName(customerName).get();
-        cartContents = processor.contents(customer);
+        customer = customerFinder.findByName(customerName).get();
+        cartContents = cartProcessor.contents(customer);
     }
 
     @Then("^there (?:is|are) (\\d+) items? inside the cart$") // Regular Expressions, not Cucumber expression
@@ -82,9 +82,9 @@ public class OrderingCookies {
 
     @When("{string} orders {int} x {string}")
     public void customerOrders(String customerName, int howMany, String recipe) throws NegativeQuantityException {
-        customer = finder.findByName(customerName).get();
+        customer = customerFinder.findByName(customerName).get();
         Cookies cookie = Cookies.valueOf(recipe);
-        cart.update(customer, new Item(cookie, howMany));
+        cartModifier.update(customer, new Item(cookie, howMany));
     }
 
     @And("the cart contains the following item: {int} x {string}")
@@ -95,21 +95,21 @@ public class OrderingCookies {
 
     @And("{string} decides not to buy {int} x {string}")
     public void customerDecidesNotToBuy(String customerName, int howMany, String recipe) throws NegativeQuantityException {
-        customer = finder.findByName(customerName).get();
+        customer = customerFinder.findByName(customerName).get();
         Cookies cookie = Cookies.valueOf(recipe);
-        cart.update(customer, new Item(cookie, -howMany));
+        cartModifier.update(customer, new Item(cookie, -howMany));
     }
 
     @Then("the price of {string}'s cart is equals to {double}")
     public void thePriceOfSebSCartIsEqualsTo(String customerName, double expectedPrice) {
-        customer = finder.findByName(customerName).get();
-        assertEquals(expectedPrice, processor.price(customer), 0.01);
+        customer = customerFinder.findByName(customerName).get();
+        assertEquals(expectedPrice, cartProcessor.price(customer), 0.01);
     }
 
     @And("{string} validates the cart and pays through the bank")
     public void validatesTheCart(String customerName) throws EmptyCartException, PaymentException {
-        customer = finder.findByName(customerName).get();
-        order = processor.validate(customer);
+        customer = customerFinder.findByName(customerName).get();
+        order = cartProcessor.validate(customer);
     }
 
     @Then("the order amount is equals to {double}")
