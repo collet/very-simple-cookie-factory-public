@@ -68,7 +68,6 @@ public class CartHandler implements CartModifier, CartProcessor {
 
     @Override
     public Order validate(Customer c) throws PaymentException, EmptyCartException {
-        // should return an order, MVP...
         if (contents(c).isEmpty())
             throw new EmptyCartException(c.getName());
         Order newOrder = payment.payOrder(c, contents(c));
