@@ -328,11 +328,7 @@ Consequently, it enables one to write a test setup with Mockito directives (e.g.
 
 Behavioral-Driven Development (BDD) bridges the gap between scenarios, which could be very close, in the Gherkin syntax, to acceptance criteria, and tests. This enables to mechanize tests that follows use cases or acceptance criteria from a user story.
 
-We consider here the use case "Adding cookies to a cart" that is more or less the one used for testing the CartHandler:
-
-  1. Considering a customer that exists in the system;
-  2. The customer add some cookies to her cart
-  3. The cart is updated (and remove duplicates, if any).
+We consider here several tests so that we have a setup that can handle many of them in a proper way.
 
 #### Setting-up Cucumber
 
@@ -382,12 +378,19 @@ We just have to add the following dependencies in the POM file (versions are usi
 
 #### Modelling use cases or scenarios as Features
 
-The Use case _Adding cookies to a cart_ is modelled as a `Feature`, and described using ([Gherkin](https://cucumber.io/docs/gherkin/)], a requirement language based on the _Given, When, Then_ paradigm. We create a file named `OrderingCookies.feature`, where we describe an instance of this very scenario:
+We consider first the use case "Ordering cookies" that is more or less the one used for testing the CartHandler:
+
+  1. Considering a customer that exists in the system.
+  2. The customer add some cookies to her cart.
+  3. The cart is updated (and remove duplicates, if any).
+  4. The cart is validated, paid (and the order is created).
+
+The Use case _Ordering cookies_ is modelled as a `Feature`, and described using ([Gherkin](https://cucumber.io/docs/gherkin/)], a requirement language based on the _Given, When, Then_ paradigm. We create a file named `OrderingCookies.feature`, where we describe an instance of this very scenario:
 
 ```gherkin
 Feature: Ordering Cookies
 
-  This feature support the way a Customer can order cookies through the VSCF system
+  This feature supports the way a Customer can order cookies through a cart
 
   Background:
     Given a customer named "Maurice" with credit card "1234896983"
@@ -411,8 +414,6 @@ To implement the behaviour of each steps, we can rely on a testing frameork, e.g
 Setting up or cleaning the context is possible through specific Cucumber annotation (e.g. `@BeforeAll`, `@Before`, `@BeforeStep`, `@After`...). Be careful as most of them have the same name as JUnit ones, but they must be imported from the `io.cucumber.java` package.
 
 ```java
-@CucumberContextConfiguration
-@SpringBootTest
 public class OrderingCookies {
 
 ...
@@ -446,19 +447,46 @@ public class OrderingCookies {
 ...
 ```
 
-#### Cucumber-Junit-Spring setup and execution
+#### Cucumber-Junit-Spring setup and execution at scale
 
 In Java, the Cucumber framework relies on JUnit, and some specific setup is also necessary. One additional class with enable the configuration of the JUnit 5 runner with a Cucumber specific plugin, and some options (typically the location of the feature files) can be specified:
 
 ```java
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")
+@SelectClasspathResource("features/ordering")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "fr.univcotedazur.vscf.cucumber")
-public class CucumberRunnerTest {
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "fr.univcotedazur.vscf.cucumber.ordering")
+public class OrderingCucumberRunnerTest {
 }
 ```
+
+Two issues must be handled to finish the setup and make it work easily with many features and some Spring mocking:
+
+First, for each runner (see above), you need to have one and only configuration class annotated with
+
+```java
+@CucumberContextConfiguration
+@SpringBootTest
+```
+
+If this is setup is placed on the class implementing the steps, there should only be one such class for the runner. Otherwise, you should create one configuration class, like `OrderingCucumberConfig`
+
+```java
+@CucumberContextConfiguration
+@SpringBootTest
+public class OrderingCucumberConfig {
+
+    @Autowired // Bug in the Cucumber/Mockito/Spring coordination: needs to add @Autowired
+    @MockBean
+    private Bank bankMock;
+
+}
+```
+Note that all steps definition classes have then no annotations at the class level (see both stepdefs classes in the `cucumber/ordering` package, and check the two separate runner, for ordering and for catalog BDD testing that are provided to show how to separate the configuration.
+
+Second, if you need to use mocks (with `@MockBean`) in the steps definition classes, you need to create them in the configuration class (like in `OrderingCucumberConfig` above) and to add `@Autowired` as these are the known workaround to make Cucumber works with mockito in Spring!
+
 
 ## Smart Logging
 
