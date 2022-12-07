@@ -26,8 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-@CucumberContextConfiguration
-@SpringBootTest
+
 public class OrderingCookies {
 
     @Autowired
@@ -48,8 +47,7 @@ public class OrderingCookies {
     @Autowired
     private CustomerFinder customerFinder;
 
-    @Autowired // Bug in the Cucumber/Mockito/Spring coordination: needs to add @Autowired
-    @MockBean
+    @Autowired
     private Bank bankMock;
 
     private Customer customer;
