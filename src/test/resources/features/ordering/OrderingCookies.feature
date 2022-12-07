@@ -1,6 +1,6 @@
 Feature: Ordering Cookies
 
-  This feature supports the way a Customer can order cookies through the Cookie Factory system
+  This feature supports the way a Customer can order cookies through a cart
 
   Background:
     Given a customer named "Maurice" with credit card "1234896983"

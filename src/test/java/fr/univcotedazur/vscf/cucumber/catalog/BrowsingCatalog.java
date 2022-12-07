@@ -1,4 +1,4 @@
-package fr.univcotedazur.vscf.cucumber;
+package fr.univcotedazur.vscf.cucumber.catalog;
 
 import fr.univcotedazur.vscf.entities.Cookies;
 import fr.univcotedazur.vscf.interfaces.CatalogExplorator;
@@ -21,7 +21,6 @@ public class BrowsingCatalog {
     public void oneCheckTheCatalogContents() {
        cookiesSet = catalogExplorator.listPreMadeRecipes();
     }
-
 
     @Then("^there (?:is|are) (\\d+) items? in it$")
     public void thereAreItemsInIt(int itemsNb) {

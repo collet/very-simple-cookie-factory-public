@@ -1,4 +1,4 @@
-package fr.univcotedazur.vscf.cucumber;
+package fr.univcotedazur.vscf.cucumber.ordering;
 
 import fr.univcotedazur.vscf.entities.*;
 import fr.univcotedazur.vscf.exceptions.AlreadyExistingCustomerException;
@@ -13,10 +13,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Set;
 
@@ -25,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
-
 
 public class OrderingCookies {
 
@@ -117,7 +113,7 @@ public class OrderingCookies {
 
     @Then("the order status is {string}")
     public void theOrderStatusIs(String state) {
-        assertEquals(OrderStatus.valueOf(state),order.getStatus());
+        assertEquals(OrderStatus.valueOf(state), order.getStatus());
     }
 
 }

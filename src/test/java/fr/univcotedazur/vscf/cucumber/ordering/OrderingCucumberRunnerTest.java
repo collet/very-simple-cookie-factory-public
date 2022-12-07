@@ -1,5 +1,4 @@
-package fr.univcotedazur.vscf.cucumber;
-
+package fr.univcotedazur.vscf.cucumber.ordering;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.Suite;
@@ -10,8 +9,8 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")
+@SelectClasspathResource("features/ordering")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "fr.univcotedazur.vscf.cucumber")
-public class CucumberRunnerTest {
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "fr.univcotedazur.vscf.cucumber.ordering")
+public class OrderingCucumberRunnerTest {
 }
